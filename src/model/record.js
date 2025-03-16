@@ -1,13 +1,22 @@
 import mongoose from "mongoose";
+import { connection, AutoIncrement } from "../db.js"
 
 const recordSchema = new mongoose.Schema({
-  progress: { type: Number, require: true, },
+  _id: { type: Number, require: true },
+  percent: { type: Number, require: true, },
   video: { type: String, require: true },
-  record_status: { type: String, require: true, default: "submitted" }, // approved, rejected, submitted
-  demon: { type: Object, require: true },
-  user_holder: { type: Object, require: true },
+  record_status: { type: Number, require: true, default: 1 }, // 2 = approved, 3 = rejected, 1 = submitted
+  demon_name: { type: String, require: true },
+  demon_id: { type: Number, require: true },
+  demon_holder: { type: String, require: true },
+  user_submitter_id: { type: Number, require: true },
+  user_submitter_name: { type: String, require: true },
   raw_footage: { type: String, require: true },
+  description: { type: String, require: false },
+  reason: { type: String, require: false },
   createdAt: { type: Date, default: Date.now },
-})
+}, { versionKey: false , _id: false })
 
-export default mongoose.model("Record", recordSchema)
+recordSchema.plugin(AutoIncrement, { id: 'record', inc_field: "_id" })
+
+export default connection.model("Record", recordSchema)

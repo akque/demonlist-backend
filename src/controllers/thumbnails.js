@@ -14,8 +14,8 @@ export const ThumbnailUpload = (req, res, next) => {
 
 export const ThumbnailGet = (req, res, next) => {
   try {
-    const id = req.params.filename
-    return res.sendFile(path.join(__dirname, `../uploads/${id}`));
+    const id = req.params.id
+    return res.sendFile(path.join(__dirname, `../images/thumbnails/${id}`));
   } catch (e) {
     next(e)
   }

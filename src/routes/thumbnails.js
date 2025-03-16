@@ -5,7 +5,7 @@ import { PermissionsCheck } from "../middlewares/permissions.js";
  
 const thumbnailsRouter = Router();
 
-thumbnailsRouter.post('/upload', PermissionsCheck, upload.single('avatar'), ThumbnailUpload)
+thumbnailsRouter.post('/', PermissionsCheck, upload.single('thumbnail'), ThumbnailUpload)
 thumbnailsRouter.get('/:id', ThumbnailGet);
 
 export default thumbnailsRouter

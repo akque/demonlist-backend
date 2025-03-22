@@ -11,7 +11,7 @@ const recordSchema = new mongoose.Schema({
   demon_holder: { type: String, require: true },
   user_submitter_id: { type: Number, require: true },
   user_submitter_name: { type: String, require: true },
-  raw_footage: { type: String, require: true },
+  raw_footage: { type: String, require: false },
   description: { type: String, require: false },
   reason: { type: String, require: false },
   createdAt: { type: Date, default: Date.now },

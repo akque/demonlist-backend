@@ -109,12 +109,17 @@ export const RecordDelete = async (req, res, next) => {
     const record = await Record.findById(id)
     if (!record) return res.status(404).send({ error: 'Record not found' })
     const userTarget = await User.findById(record.user_submitter_id)
-    if (userTarget) return res.status(404).send({ error: 'User not found' })
+    if (!userTarget) return res.status(404).send({ error: 'User not found' })
     const demon = await Demon.findById(record.demon_id)
     if (!demon) return res.status(404).send({ error: 'Demon not found' })
 
     userTarget.records = userTarget.records.filter((i) => i._id != id)
-    await user_holder.save()
+    await userTarget.save()
+
+    if(record.status == 2) {
+      userTarget.score -= demon.score
+      await userTarget.save()
+    }
 
     demon.records = demon.records.filter((i) => i._id != id)
     await demon.save()
@@ -132,7 +137,7 @@ export const RecordList = async (req, res, next) => {
     const userAdmin = await User.findById(req.user)
     if (userAdmin.permissions < 1) return res.status(403).send({ error: 'Insufficient permissions to perform this action' })
 
-    const records = await Record.find(filter).sort({ createdAt: -1 })
+    const records = await Record.find({}).sort({ createdAt: 1 })
 
     return res.status(200).send({ data: records, message: 'Record list retrieved successfully' })
   } catch (error) {

@@ -11,6 +11,10 @@ export const DemonCreate = async (req, res, next) => {
     if (userAdmin.role < 2) return res.status(403).send({ error: 'Insufficient permissions to perform this action' })
 
     const demons = await Demon.find({}).sort({ place: 1 })
+
+    const demonsEnd = await Demon.find({}).sort({ place: -1 })
+    if ( place < 1 || place > demonsEnd[0].place + 1) return res.status(400).send({ error: `Place must be between 1 and ${demonsEnd[0].place + 1}` })
+
     const demon = await Demon.create({ name, holder, length, objects, version, place, verifier, creator, video, level_id, minimal_percent, description })
     if (!demon) return res.status(400).send({ error: 'Internal error' })
 
@@ -60,6 +64,9 @@ export const DemonListUpdate = async (req, res, next) => {
 
     const demons = await Demon.find({}).sort({ place: 1 })
 
+    const demonsEnd = await Demon.find({}).sort({ place: -1 })
+    if ( place < 1 || place > demonsEnd[0].place + 1) return res.status(400).send({ error: `Place must be between 1 and ${demonsEnd[0].place + 1}` })
+
     const oldPlace = demon.place
     const oldScore = demon.calculateScore()
     demon.place = place
@@ -85,7 +92,7 @@ export const DemonListUpdate = async (req, res, next) => {
           if(d.place >= place && d.place < oldPlace) {
             const oldScore = d.calculateScore()
             d.place += 1
-            d.score = demon.calculateScore()
+            d.score = d.calculateScore()
             await d.save()
 
             const records = await Record.find({ demon_id: d._id })
@@ -105,7 +112,7 @@ export const DemonListUpdate = async (req, res, next) => {
           if(d.place <= place && d.place > oldPlace) {
             const oldScore = d.calculateScore()
             d.place -= 1
-            d.score = demon.calculateScore()
+            d.score = d.calculateScore()
             await d.save()
 
             const records = await Record.find({ demon_id: d._id })
@@ -157,4 +164,21 @@ export const GetDemonsList = async (req, res, next) => {
   } catch (error) {
     next(error)
   }  
+}
+
+export const GetDemonsByQuery = async (req, res, next) => {
+  try {
+    const { query } = req.query
+    let demons
+
+    if (query) {
+      demons = await Demon.find({ name: { $regex: query, $options: 'i' }}).sort({ place: 1 })
+    } else {
+      demons = await Demon.find().sort({ place: 1 })
+    }
+
+    return res.status(200).send({ data: demons, message: 'Demons found successfully' })
+  } catch (error) {
+    next(error)
+  }
 }

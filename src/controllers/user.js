@@ -1,4 +1,5 @@
 import User from '../model/user.js'
+import Demon from '../model/demon.js'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import rateLimit from 'express-rate-limit';
@@ -99,7 +100,8 @@ export const UserGetById = async (req, res, next) => {
     if (!user) {
       return res.status(404).send({ error: 'User not found' })
     } else {
-      return res.status(200).send({ data: user })
+      const list = await Demon.find({ _id: user.records.map((r) => r.demon_id) }).sort({ place: 1 })
+      return res.status(200).send({ data: { user, hardest: list[0]?.name }})
     }
   } catch (error) {
     next (error)

@@ -1,8 +1,13 @@
-import { Router } from 'express';
-import { RecordSubmit, RecordUpdateStatus, RecordDelete, RecordList } from '../controllers/record.js'
+import { Router } from 'express'
+import {
+	RecordSubmit,
+	RecordUpdateStatus,
+	RecordDelete,
+	RecordList
+} from '../controllers/record.js'
 import { authenticate } from '../middlewares/authenticate.js'
 
-const recordRouter = Router();
+const recordRouter = Router()
 
 recordRouter.post('/', authenticate, RecordSubmit)
 recordRouter.patch('/', authenticate, RecordUpdateStatus)

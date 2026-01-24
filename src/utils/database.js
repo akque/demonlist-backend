@@ -1,9 +1,10 @@
 import mongoose from 'mongoose'
 import AutoIncrementFactory from 'mongoose-sequence'
+import dotenv from 'dotenv'
 
-const database = 'mongodb://localhost:27017/demonlist'
+dotenv.config()
 
-const connection = mongoose.createConnection(database, {
+const connection = mongoose.createConnection(process.env.MONGODB_URL, {
 	useNewUrlParser: true,
 	useUnifiedTopology: true
 })
